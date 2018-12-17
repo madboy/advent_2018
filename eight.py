@@ -27,9 +27,7 @@ def dfs_visit(tree, u, metadata):
     metadata.append(sum(tree[u+2:u+2+m]))
     return u + m
 
-tree = fileinput.input().readline().strip().split(" ")
-for i, t in enumerate(tree):
-    tree[i] = int(t)
+tree = list(map(int, fileinput.input().readline().strip().split(" ")))
 
 metadata = []
 
