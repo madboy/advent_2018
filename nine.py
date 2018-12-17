@@ -27,17 +27,6 @@ def insert(current, length, circle, marble):
             circle = circle[:current] + [marble] + circle[current:]
     return circle, score, current
 
-# def insert(current, length, circle, marble):
-#     score = 0
-#     if (marble % 23) == 0:
-#         score += marble
-#         score += circle.pop(current-7)
-#     elif current >= length:
-#         circle.append(marble)
-#     else:
-#         circle = circle[:current] + [marble] + circle[current:]
-#     return circle, score
-
 players, last = map(int, fileinput.input().readline().strip().split())
 
 circle = [0]
