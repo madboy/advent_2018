@@ -5,7 +5,6 @@ import fileinput
 
 def get_index(length, current):
     n = current + 2
-    # l = len(circle)
     if n <= length:
         return n
     else:
@@ -19,8 +18,6 @@ def insert(current, length, circle, marble):
         current = (current - 7)%length
     else:
         current = get_index(length, current)
-        if current < 0:
-            print(current, i)
         if current == length:
             circle.append(marble)
         else:
