@@ -3,37 +3,46 @@
 from collections import defaultdict
 import fileinput
 
-def get_index(length, current):
-    n = current + 2
-    if n <= length:
-        return n
-    else:
-        return n - length
+class Node(object):
+    def __init__(self, v, n, p):
+        self.v = v
+        self.n = n
+        self.p = p
 
-def insert(current, length, circle, marble):
-    score = 0
-    if (marble % 23) == 0:
-        score += marble
-        score += circle.pop(current-7)
-        current = (current - 7)%length
-    else:
-        current = get_index(length, current)
-        if current == length:
-            circle.append(marble)
+    def __str__(self):
+        if self.n and self.p:
+            return "({} <- {} -> {})".format(self.p.v, self.v, self.n.v)
+        elif self.n:
+            return ". <- {} -> {}".format(self.v, self.n.v)
+        elif self.p:
+            return "{} <- {} -> .".format(self.p.v, self.v)
         else:
-            circle = circle[:current] + [marble] + circle[current:]
-    return circle, score, current
+            return "(. <- {} -> .)".format(self.v)
+
+    def __repr__(self):
+        return self.__str__()
 
 players, last = map(int, fileinput.input().readline().strip().split())
-
-circle = [0]
-current = 0
 scores = defaultdict(int)
-for i in range(1, last+1):
-    player = i % players
-    length = len(circle)
-    circle, score, current = insert(current, length, circle, i)
-    scores[player] += score
 
-# assert circle == [0, 16, 8, 17, 4, 18, 19, 2, 24, 20, 25, 10, 21, 5, 22, 11, 1, 12, 6, 13, 3, 14, 7, 15], circle
+start = current = Node(0, None, None)
+current.n = current
+
+for i in range(1, last+1):
+    if (i % 23) == 0:
+        for _ in range(0, 7):
+            current = current.p
+        scores[i%players] += (i+ current.v)
+        current.p.n = current.n
+        current.n.p = current.p
+        current = current.n
+    else:
+        tmp = Node(i, None, None)
+        relink = current.n
+        tmp.n = relink.n
+        tmp.p = relink
+        relink.n = tmp
+        tmp.n.p = tmp
+        current = tmp
+
 print(max(scores.values()))
