@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from collections import defaultdict
 import fileinput
 
@@ -11,7 +10,7 @@ fr = []
 
 for line in inputs:
     line = line.strip()
-    frequency =  int(line)
+    frequency = int(line)
     fr.append(frequency)
     current_frequency += frequency
     frequencies[current_frequency] += 1
