@@ -1,15 +1,19 @@
 #!/usr/bin/env python
-from src import *
+from src import one, two, three, four, five, six, seven, eight, nine, ten
 import sys
 
 days = [
-    "",
+    (),
     (one.run, "input/1"),
     (two.run, "input/2"),
     (three.run, "input/3"),
     (four.run, "input/4"),
     (five.run, "input/5"),
     (six.run, "input/6"),
+    (seven.run, "input/7"),
+    (eight.run, "input/8"),
+    (nine.run, "input/9"),
+    (ten.run, "input/10"),
 ]
 
 

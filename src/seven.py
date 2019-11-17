@@ -1,16 +1,14 @@
-#!/usr/bin/env python
-
 from collections import defaultdict
 import copy
-import fileinput
 import re
 import string
+from src.tools import process
 
 
 class Workers(object):
     def __init__(self):
         self.workers = [0, 0, 0, 0, 0]
-        self.items = ['', '', '', '', '']
+        self.items = ["", "", "", "", ""]
 
     def __str__(self):
         return str(zip(self.workers, self.items))
@@ -25,6 +23,7 @@ def deps(rgraph, node, path):
             return False
     return True
 
+
 def find_next(rgraph, nodes, path):
     available = []
     for node in nodes:
@@ -32,12 +31,14 @@ def find_next(rgraph, nodes, path):
             available.append(node)
     return available
 
+
 def get_free_worker(workers, node):
     if node not in workers.items:
         for i, w in enumerate(workers.workers):
-            if w == 0 and workers.items[i] == '': # protect against A that has cost 0
+            if w == 0 and workers.items[i] == "":  # protect against A that has cost 0
                 return i
     return None
+
 
 def update_workers(workers, nodes, path):
     for i, worker in enumerate(workers.workers):
@@ -46,9 +47,10 @@ def update_workers(workers, nodes, path):
         if worker == 0 and workers.items[i]:
             path += workers.items[i]
             nodes.remove(workers.items[i])
-            workers.items[i] = ''
+            workers.items[i] = ""
 
-def find_path_with_workers(rgraph, nodes, workers = None, delay=0, cost={}):
+
+def find_path_with_workers(rgraph, nodes, workers=None, delay=0, cost={}):
     timing = 0
     path = []
     while nodes:
@@ -60,6 +62,7 @@ def find_path_with_workers(rgraph, nodes, workers = None, delay=0, cost={}):
         update_workers(workers, nodes, path)
         timing += 1
     return path, timing
+
 
 def find_path(rgraph, nodes):
     path = []
@@ -74,31 +77,30 @@ def find_path(rgraph, nodes):
             idx += 1
     return path
 
-inputs = fileinput.input()
-inst = re.compile("Step (\w) .* step (\w)")
-graph = defaultdict(list)
-rgraph = defaultdict(list)
-nodes = set()
 
-for line in inputs:
-    instruction = line.strip()
-    steps = inst.match(instruction)
-    head = steps.group(1)
-    step = steps.group(2)
-    nodes.add(head)
-    nodes.add(step)
-    rgraph[step].append(head)
+def run(input_file):
+    inst = re.compile(r"Step (\w) .* step (\w)")
+    rgraph = defaultdict(list)
+    nodes = set()
 
-nodes = sorted(list(nodes))
-nodes_2 = copy.deepcopy(nodes)
+    for instruction in process(input_file):
+        steps = inst.match(instruction)
+        head = steps.group(1)
+        step = steps.group(2)
+        nodes.add(head)
+        nodes.add(step)
+        rgraph[step].append(head)
 
-print(''.join(find_path(rgraph, nodes)))
+    nodes = sorted(list(nodes))
+    nodes_2 = copy.deepcopy(nodes)
 
-cost = {}
-i = 0
-for c in string.ascii_uppercase:
-    cost[c] = i
-    i += 1
+    print("".join(find_path(rgraph, nodes)))
 
-workers = Workers()
-print(find_path_with_workers(rgraph, nodes_2, workers, 60, cost))
+    cost = {}
+    i = 0
+    for c in string.ascii_uppercase:
+        cost[c] = i
+        i += 1
+
+    workers = Workers()
+    print(find_path_with_workers(rgraph, nodes_2, workers, 60, cost))
