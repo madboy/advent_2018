@@ -8,16 +8,14 @@ class Pattern:
     result: str
 
 
-@dataclass
-class Change:
-    index: int
-    value: str
+EMPTY = "."
+PLANT = "#"
 
 
 def print_state(state, low, high):
     s = ""
     for i in range(low, high + 1):
-        s += state.get(i, ".")
+        s += state.get(i, EMPTY)
     print(s)
 
 
@@ -30,7 +28,7 @@ def run(input_file):
 
     state = {}
     for i, c in enumerate(initial_state):
-        if c == "#":
+        if c == PLANT:
             state[i] = c
 
     next(file_contents)  ## drain empty line
@@ -47,24 +45,24 @@ def run(input_file):
         for i in range(low - 2, high + 2):
 
             llcrr = (
-                state.get(i - 2, ".")
-                + state.get(i - 1, ".")
-                + state.get(i, ".")
-                + state.get(i + 1, ".")
-                + state.get(i + 2, ".")
+                state.get(i - 2, EMPTY)
+                + state.get(i - 1, EMPTY)
+                + state.get(i, EMPTY)
+                + state.get(i + 1, EMPTY)
+                + state.get(i + 2, EMPTY)
             )
             for pattern in patterns:
-                if llcrr == pattern.pattern and pattern.result == "#":
-                    changes.append(Change(i, pattern.result))
+                if llcrr == pattern.pattern and pattern.result == PLANT:
+                    changes.append(i)
                     continue
 
         new_state = {}
-        for change in changes:
-            new_state[change.index] = change.value
-            if change.index < low:
-                low = change.index
-            if change.index > high:
-                high = change.index
+        for idx in changes:
+            new_state[idx] = PLANT
+            if idx < low:
+                low = idx
+            if idx > high:
+                high = idx
 
         state = new_state
 
