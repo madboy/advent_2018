@@ -1,5 +1,18 @@
 #!/usr/bin/env python
-from src import one, two, three, four, five, six, seven, eight, nine, ten, eleven
+from src import (
+    one,
+    two,
+    three,
+    four,
+    five,
+    six,
+    seven,
+    eight,
+    nine,
+    ten,
+    eleven,
+    twelve,
+)
 import sys
 
 days = [
@@ -15,6 +28,7 @@ days = [
     (nine.run, "input/9"),
     (ten.run, "input/10"),
     (eleven.run, "input/11"),
+    (twelve.run, "input/12.test"),
 ]
 
 
