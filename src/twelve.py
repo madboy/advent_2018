@@ -1,51 +1,71 @@
-import re
+from dataclasses import dataclass
 from src.tools import process
 
 
-def pad_initial_state(istate, padding=10):
-    return "." * 3 + istate + "." * 11
+@dataclass
+class Pattern:
+    pattern: str
+    result: str
 
 
-EMPTY = "."
-PLANT = "#"
+@dataclass
+class Change:
+    index: int
+    value: str
+
+
+def print_state(state, low, high):
+    s = ""
+    for i in range(low, high + 1):
+        s += state.get(i, ".")
+    print(s)
 
 
 def run(input_file):
     file_contents = process(input_file)
     initial_state = next(file_contents)
     initial_state = initial_state[15:]  # remove the line description
-    initial_state = pad_initial_state(
-        initial_state
-    )  # make sure we have some empty pots on the sides
+    low = 0
+    high = len(initial_state)
+
+    state = {}
+    for i, c in enumerate(initial_state):
+        if c == "#":
+            state[i] = c
 
     next(file_contents)  ## drain empty line
 
-    patterns = {}
+    print_state(state, low, high)
+
+    patterns = []
     for line in file_contents:
         pattern, result = line.split(" => ")
-        pattern = pattern.replace(
-            ".", r"\."
-        )  # change so that we can use the pattern as regex
-        patterns[pattern] = result
+        patterns.append(Pattern(pattern, result))
 
-    print(initial_state)
-    for _ in range(0, 5):
-        matches = set()
-        for pattern, result in patterns.items():
-            i = re.finditer(pattern, initial_state)
-            for m in i:
-                matches.add((m.start(0), result))
+    for g in range(0, 20):
+        changes = []
+        for i in range(low - 2, high + 2):
 
-        state_list = list(initial_state)
-        for match in matches:
-            # assume that all pots surrounding a (matching?) pattern will be set to empty
-            # I don't think we can assume this as it makes result non-deterministic as we can change the same point more than once
-            # and the order of which we have the matches will matter
-            state_list[match[0]] = EMPTY
-            state_list[match[0] + 1] = EMPTY
-            state_list[match[0] + 2] = match[1]
-            state_list[match[0] + 3] = EMPTY
-            state_list[match[0] + 4] = EMPTY
+            llcrr = (
+                state.get(i - 2, ".")
+                + state.get(i - 1, ".")
+                + state.get(i, ".")
+                + state.get(i + 1, ".")
+                + state.get(i + 2, ".")
+            )
+            for pattern in patterns:
+                if llcrr == pattern.pattern and pattern.result == "#":
+                    changes.append(Change(i, pattern.result))
+                    continue
 
-        initial_state = "".join(state_list)
-        print(initial_state)
+        new_state = {}
+        for change in changes:
+            new_state[change.index] = change.value
+            if change.index < low:
+                low = change.index
+            if change.index > high:
+                high = change.index
+
+        state = new_state
+
+    print(sum(state))

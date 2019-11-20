@@ -28,7 +28,7 @@ days = [
     (nine.run, "input/9"),
     (ten.run, "input/10"),
     (eleven.run, "input/11"),
-    (twelve.run, "input/12.test"),
+    (twelve.run, "input/12"),
 ]
 
 
