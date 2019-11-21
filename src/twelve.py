@@ -67,3 +67,4 @@ def run(input_file):
         state = new_state
 
     print(sum(state))
+    # for part two we can use the result from 100 and 1000 generations for the pattern g * 50 + 695 => 50000000000 * 50 + 695
