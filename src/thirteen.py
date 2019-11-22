@@ -1,4 +1,3 @@
-from collections import defaultdict
 from dataclasses import dataclass
 from src.tools import left_pad_process
 
@@ -51,13 +50,11 @@ def run(input_file):
     for line in left_pad_process(input_file):
         x = 0
         for c in line:
-            if c == " ":  # we don't need to save spaces
+            if c == " ":  # we don't need to save spaces or - |
                 pass
             elif c in [">", "<"]:
-                sections[Pos(x, y)] = "-"
                 carts.append(Cart(Pos(x, y), directions[c], 0, False))
             elif c in ["^", "v"]:
-                sections[Pos(x, y)] = "|"
                 carts.append(Cart(Pos(x, y), directions[c], 0, False))
             else:
                 sections[Pos(x, y)] = c
@@ -88,11 +85,9 @@ def run(input_file):
             if cart.dead:
                 continue
 
-            next_section = sections[cart.p]
+            next_section = sections.get(cart.p)
 
-            if next_section in ["-", "|"]:
-                pass
-            elif next_section == "+":
+            if next_section == "+":
                 cart.direction = (cart.direction + turns[cart.turn]) % 4
                 cart.turn = (cart.turn + 1) % 3
             elif next_section == "\\":
