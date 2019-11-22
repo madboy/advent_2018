@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from src.tools import left_pad_process
+from src.tools import left_pad_process, turn
 
 
 @dataclass(eq=True)
@@ -16,14 +16,14 @@ class Pos:
         return self
 
 
-directions = {"<": 0, "^": 1, ">": 2, "v": 3}
-turns = [-1, 0, 1]  # left, straight, right
+directions = {"<": "left", "^": "up", ">": "right", "v": "down"}
+dturns = {0: "left", 1: "straight", 2: "right"}
 
 
 @dataclass
 class Cart:
     p: Pos
-    direction: int
+    d: str
     turn: int  # which way I should turn, starting value should be 0
     # turn should be index into turns -1, 0, 1, and we incr index % 3
     # this then resolves into which direction we move
@@ -52,10 +52,8 @@ def run(input_file):
         for c in line:
             if c == " ":  # we don't need to save spaces or - |
                 pass
-            elif c in [">", "<"]:
-                carts.append(Cart(Pos(x, y), directions[c], 0, False))
-            elif c in ["^", "v"]:
-                carts.append(Cart(Pos(x, y), directions[c], 0, False))
+            elif c in ["<", "^", ">", "v"]:
+                carts.append(Cart(p=Pos(x, y), turn=0, dead=False, d=directions[c],))
             else:
                 sections[Pos(x, y)] = c
             x += 1
@@ -63,14 +61,18 @@ def run(input_file):
 
     print(carts)
     # --------------------------- Ticks until first crash ---------------------------
-    # directions = {"<": 0, "^": 1, ">": 2, "v": 3}
-    movement = [Pos(-1, 0), Pos(0, -1), Pos(1, 0), Pos(0, 1)]
+    dmovement = {
+        "left": Pos(-1, 0),
+        "up": Pos(0, -1),
+        "right": Pos(1, 0),
+        "down": Pos(0, 1),
+    }
     while len(carts) > 1:
         carts.sort()
         for cart in carts:
             if cart.dead:
                 continue
-            new_pos = cart.p + movement[cart.direction]
+            new_pos = cart.p + dmovement[cart.d]
 
             cart.p = new_pos
             for other_cart in carts:
@@ -88,18 +90,18 @@ def run(input_file):
             next_section = sections.get(cart.p)
 
             if next_section == "+":
-                cart.direction = (cart.direction + turns[cart.turn]) % 4
+                cart.d = turn(cart.d, dturns[cart.turn])
                 cart.turn = (cart.turn + 1) % 3
             elif next_section == "\\":
-                if cart.direction in [1, 3]:
-                    cart.direction = (cart.direction - 1) % 4
+                if cart.d in ["up", "down"]:
+                    cart.d = turn(cart.d, "left")
                 else:
-                    cart.direction = (cart.direction + 1) % 4
+                    cart.d = turn(cart.d, "right")
             elif next_section == "/":
-                if cart.direction in [1, 3]:
-                    cart.direction = (cart.direction + 1) % 4
+                if cart.d in ["up", "down"]:
+                    cart.d = turn(cart.d, "right")
                 else:
-                    cart.direction = (cart.direction - 1) % 4
+                    cart.d = turn(cart.d, "left")
 
         carts = [cart for cart in carts if not cart.dead]
     print(carts)
