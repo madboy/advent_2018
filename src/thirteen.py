@@ -53,21 +53,16 @@ def run(input_file):
 
     # --------------------------- Ticks until first crash ---------------------------
     collision = False
+    # directions = {"<": 0, "^": 1, ">": 2, "v": 3}
+    movement = [Pos(-1, 0), Pos(0, -1), Pos(1, 0), Pos(0, 1)]
     while not collision:
         positions = defaultdict(int)
         for cart in carts:
-            if cart.direction == 0:
-                new_pos = Pos(cart.p.x - 1, cart.p.y)
-                next_section = sections[new_pos]
-            elif cart.direction == 1:
-                new_pos = Pos(cart.p.x, cart.p.y - 1)
-                next_section = sections[new_pos]
-            elif cart.direction == 2:
-                new_pos = Pos(cart.p.x + 1, cart.p.y)
-                next_section = sections[new_pos]
-            elif cart.direction == 3:
-                new_pos = Pos(cart.p.x, cart.p.y + 1)
-                next_section = sections[new_pos]
+            new_pos = Pos(
+                cart.p.x + movement[cart.direction].x,
+                cart.p.y + movement[cart.direction].y,
+            )
+            next_section = sections[new_pos]
 
             cart.p = new_pos
             if next_section in ["-", "|"]:
