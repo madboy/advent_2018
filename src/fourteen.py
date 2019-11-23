@@ -26,7 +26,10 @@ def run(input_file):
                 current = current[-len(number) :]
 
             e1 = (recipe1 + e1 + 1) % len(results)
+            e2 = (recipe2 + e2 + 1) % len(results)
 
+        # if our number isn't the last part of the current result we need
+        # to subtract one extra from how many recipes are before our number
         adjustment = 0 if current[-len(number) :] == number else 1
         print(len(results) - len(number) - adjustment)
 
