@@ -13,6 +13,7 @@ from src import (
     eleven,
     twelve,
     thirteen,
+    fourteen,
 )
 import sys
 
@@ -31,6 +32,7 @@ days = [
     (eleven.run, "input/11"),
     (twelve.run, "input/12"),
     (thirteen.run, "input/13"),
+    (fourteen.run, "input/14"),
 ]
 
 
