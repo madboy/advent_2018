@@ -81,6 +81,7 @@ def run(input_file):
                     and other_cart.p == cart.p
                     and not other_cart.dead
                 ):
+                    print(cart.p)
                     other_cart.dead = True
                     cart.dead = True
                     break
