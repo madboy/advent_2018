@@ -17,10 +17,6 @@ def part1(number, e1, e2, results):
     number = int(number)
     print(number)
 
-    # e1 = 0
-    # e2 = 1
-    # results = [3, 7]
-
     while len(results) < number + 10:
         e1, e2 = new_recipe(e1, e2, results)
 
@@ -30,10 +26,6 @@ def part1(number, e1, e2, results):
 def part2(number, e1, e2, results):
     number = [int(c) for c in number]
     print(number)
-
-    # e1 = 0
-    # e2 = 1
-    # results = [3, 7]
 
     while True:
         e1, e2 = new_recipe(e1, e2, results)
