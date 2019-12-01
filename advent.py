@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 from dataclasses import dataclass
 from src import (
     one,
@@ -19,10 +20,15 @@ from src import (
 import sys
 from typing import Callable
 
+
 @dataclass
 class Day:
     program: Callable
     input_file: str
+
+    def __call__(self):
+        self.program(self.input_file)
+
 
 days = [
     (),
@@ -44,19 +50,14 @@ days = [
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("usage: ./advent.py <day_nbr>")
+    parser = argparse.ArgumentParser(description="Run an advent of code entry.")
+    parser.add_argument(
+        "day", metavar="day", type=int, help="the day of advent",
+    )
+    args = parser.parse_args()
+
+    if args.day >= len(days) or args.day <= 0:
+        print(f"I don't know that day yet. Try one between 1-{len(days)-1}.")
         sys.exit(1)
 
-    try:
-        day = int(sys.argv[1])
-    except ValueError:
-        print("Try using a number.")
-        sys.exit(2)
-
-    if day >= len(days) or day <= 0:
-        print(f"I don't know that day yet. Try one between 1-{len(days)-1}.")
-        sys.exit(3)
-
-    d = days[day]
-    d.program(d.input_file)
+    days[args.day]()
